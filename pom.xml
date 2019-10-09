@@ -4,9 +4,17 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.myorg</groupId>
+  <groupId>com.development</groupId>
   <artifactId>player-app</artifactId>
   <version>1.0-SNAPSHOT</version>
+
+  <developers>
+    <developer>
+      <id>damientl</id>
+      <name>Damien Thome Lutz</name>
+      <email>damien....@gmail</email>
+    </developer>
+  </developers>
 
   <properties>
     <maven.version>3.3.9</maven.version>
