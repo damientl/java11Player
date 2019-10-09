@@ -8,7 +8,6 @@ import com.development.playerapp.application.impl.ConsoleLoggerImpl;
 import com.development.playerapp.application.impl.MessagesMediatorImpl;
 import com.development.playerapp.domain.model.PlayerPair;
 import com.development.playerapp.domain.model.PlayerSet;
-import com.development.playerapp.domain.player.InitiatorPlayer;
 import com.development.playerapp.domain.player.Player;
 import com.development.playerapp.domain.player.PlayerConsumer;
 import com.development.playerapp.infrastructure.MessageBroker;
@@ -16,8 +15,6 @@ import com.development.playerapp.infrastructure.MessageBroker;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
-
-import static com.development.playerapp.domain.model.Players.INITIATOR;
 
 /**
  * Factory to create player objects
@@ -46,20 +43,11 @@ public class PlayerSetFactory {
     }
 
     public Player createPlayer(PlayerPair pair) {
-        if (INITIATOR.equals(pair.getPlayer())) {
-            return new InitiatorPlayer(pair.getPlayer(),
-                    createPlayerConsumer(pair),
-                    mediator,
-                    communicationOrchestrator,
-                    pair.getPartnerPlayer(),
-                    logger
-            );
-        }
         return new Player(pair.getPlayer(),
                 createPlayerConsumer(pair),
                 mediator,
                 communicationOrchestrator,
-                pair.getPartnerPlayer(),
+                pair.getBuddy(),
                 logger
         );
     }

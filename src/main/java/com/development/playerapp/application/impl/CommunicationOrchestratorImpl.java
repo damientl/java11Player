@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Communication Orchestrator following @see CommunicationRulesService rules
  */
 public class CommunicationOrchestratorImpl implements CommunicationOrchestrator {
-    private static final int WAIT_LOOP_SECONDS = 100;
+    private static final int WAIT_LOOP_TIME = 100;
     private final Lock lock = new ReentrantLock();
     private Boolean conversationStared = false;
     private final CommunicationRulesService communicationRulesService = new CommunicationRulesService();
@@ -34,10 +34,10 @@ public class CommunicationOrchestratorImpl implements CommunicationOrchestrator 
         lock.unlock();
     }
 
-    public synchronized void waitConversationStarted() {
+    public void waitConversationStarted() {
         try {
             while (!conversationStared) {
-                conversationStared = lock.tryLock(WAIT_LOOP_SECONDS, TimeUnit.SECONDS);
+                conversationStared = lock.tryLock(WAIT_LOOP_TIME, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

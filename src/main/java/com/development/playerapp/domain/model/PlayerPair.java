@@ -3,18 +3,18 @@ package com.development.playerapp.domain.model;
 public class PlayerPair {
 
     private final String player;
-    private final String partnerPlayer;
+    private final String buddy;
 
-    public PlayerPair(String player, String partnerPlayer) {
+    public PlayerPair(String player, String buddy) {
         this.player = player;
-        this.partnerPlayer = partnerPlayer;
+        this.buddy = buddy;
     }
 
     public String getPlayer() {
         return player;
     }
 
-    public String getPartnerPlayer() {
-        return partnerPlayer;
+    public String getBuddy() {
+        return buddy;
     }
 }

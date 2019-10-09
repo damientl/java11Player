@@ -6,6 +6,8 @@ import com.development.playerapp.application.MessagesMediator;
 
 import java.util.Objects;
 
+import static com.development.playerapp.domain.model.Players.INITIATOR;
+
 /**
  * Class representing Player domain object and defines its behavior
  * <p>
@@ -17,7 +19,7 @@ public class Player implements ReceivedMessageObserver, Runnable {
     private final MessagesMediator messagesMediator;
     private final CommunicationOrchestrator communicationOrchestrator;
     private final String name;
-    private final String partnerPlayer;
+    private final String buddyPlayer;
     private final Logger logger;
     private Integer sentMessages = 0;
     private Integer receivedMessages = 0;
@@ -27,22 +29,15 @@ public class Player implements ReceivedMessageObserver, Runnable {
             PlayerConsumer playerConsumer,
             MessagesMediator messagesMediator,
             CommunicationOrchestrator communicationOrchestrator,
-            String partnerPlayer,
+            String buddyPlayer,
             Logger logger
     ) {
-        PlayerValidator.validate(name,
-                playerConsumer,
-                messagesMediator,
-                communicationOrchestrator,
-                partnerPlayer,
-                logger);
-
         playerConsumer.setReceivedMessageObserver(this);
         this.playerConsumer = playerConsumer;
         this.messagesMediator = messagesMediator;
         this.communicationOrchestrator = communicationOrchestrator;
         this.name = name;
-        this.partnerPlayer = partnerPlayer;
+        this.buddyPlayer = buddyPlayer;
         this.logger = logger;
     }
 
@@ -53,21 +48,20 @@ public class Player implements ReceivedMessageObserver, Runnable {
     @Override
     public void run() {
 
-        communicationOrchestrator.waitConversationStarted();
-        doAfterCommunicationStart();
+        if (INITIATOR.equals(name)) {
+            communicationOrchestrator.waitConversationStarted();
+            speak("Hello Buddy");
+        }
 
         playerConsumer.listenToQueue();
     }
 
-    public void doAfterCommunicationStart() {
-    }
-
-    protected void speak(String text) {
+    private void speak(String text) {
         logger.info(
                 "------------------------\n" +
                         name + " - Sending message: " + text + "\n" +
                         "------------------------\n");
-        messagesMediator.sendMessage(text, partnerPlayer);
+        messagesMediator.sendMessage(text, buddyPlayer);
         sentMessages++;
     }
 
@@ -78,7 +72,7 @@ public class Player implements ReceivedMessageObserver, Runnable {
     @Override
     public void receivedMessage(String message) {
         receivedMessages++;
-        if (communicationOrchestrator.canCommunicationContinue(receivedMessages, sentMessages, partnerPlayer)) {
+        if (communicationOrchestrator.canCommunicationContinue(receivedMessages, sentMessages, buddyPlayer)) {
             speak(message + ", count: " + sentMessages);
         }
     }
