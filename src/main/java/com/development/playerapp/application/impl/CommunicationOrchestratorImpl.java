@@ -7,6 +7,8 @@ import com.development.playerapp.domain.service.CommunicationRulesService;
 import com.development.playerapp.infrastructure.MessageBroker;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,34 +16,40 @@ import java.util.concurrent.locks.ReentrantLock;
  * Communication Orchestrator following @see CommunicationRulesService rules
  */
 public class CommunicationOrchestratorImpl implements CommunicationOrchestrator {
-    private static final int WAIT_LOOP_SECONDS = 100;
-    private final Lock lock = new ReentrantLock();
     private Boolean conversationStared = false;
     private final CommunicationRulesService communicationRulesService = new CommunicationRulesService();
     private final MessageBroker messageBroker;
+
+    private Object communicationChannel;
 
     private void killPlayers() {
         messageBroker.broadcast(new Message("", MessageType.POISON_PILL));
     }
 
-    public CommunicationOrchestratorImpl(MessageBroker messageBroker) {
+    public CommunicationOrchestratorImpl(MessageBroker messageBroker,
+        Object communicationChannel) {
         this.messageBroker = messageBroker;
-        lock.lock();
+        this.communicationChannel = communicationChannel;
     }
 
-    @Override
+  @Override
     public void startConversation() {
-        lock.unlock();
+      conversationStared = true;
+      communicationChannel.notifyAll();
     }
 
-    public synchronized void waitConversationStarted() {
+    public void waitConversationStarted() {
+
+      synchronized (communicationChannel)
+      {
         try {
-            while (!conversationStared) {
-                conversationStared = lock.tryLock(WAIT_LOOP_SECONDS, TimeUnit.SECONDS);
-            }
+          while (!conversationStared) {
+            communicationChannel.wait();
+          }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+          Thread.currentThread().interrupt();
         }
+      }
     }
 
     @Override

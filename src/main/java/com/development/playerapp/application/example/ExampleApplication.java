@@ -16,16 +16,18 @@ Class responsible for coordinating domain objects and starting application
  */
 public class ExampleApplication {
 
-    public void run() {
-        PlayerSet playerSet = new PlayerSetFactory().createSet(
-                Arrays.asList(
-                        new PlayerPair(INITIATOR, PLAYER_2),
-                        new PlayerPair(PLAYER_2, INITIATOR))
+
+    public synchronized void run() {
+        PlayerSet playerSet = new PlayerSetFactory(this).createSet(
+            Arrays.asList(
+                new PlayerPair(INITIATOR, PLAYER_2),
+                new PlayerPair(PLAYER_2, INITIATOR))
         );
 
         playerSet.getPlayers().forEach(Player::init);
 
         playerSet.getCommunicationOrchestrator().startConversation();
+
     }
 
 
