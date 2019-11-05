@@ -11,7 +11,7 @@ public class ConsoleLoggerImpl implements Logger {
         INFO, DEBUG, ERROR
     }
 
-    private final LogLevel logLevel = LogLevel.INFO;
+    private final LogLevel logLevel = LogLevel.DEBUG;
 
 
     public void debug(String message) {

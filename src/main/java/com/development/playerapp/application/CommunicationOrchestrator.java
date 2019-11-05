@@ -5,8 +5,6 @@ package com.development.playerapp.application;
  * This includes starting and finishing conversation gracefully as soon as conversation can not continue
  */
 public interface CommunicationOrchestrator {
-    void startConversation();
-
     void waitConversationStarted();
 
     Boolean canCommunicationContinue(Integer receivedMessages, Integer sentMessages, String targetPlayer);

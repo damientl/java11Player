@@ -54,6 +54,7 @@ public class Player implements ReceivedMessageObserver, Runnable {
     public void run() {
 
         communicationOrchestrator.waitConversationStarted();
+        logger.debug("player starting converstion");
         doAfterCommunicationStart();
 
         playerConsumer.listenToQueue();

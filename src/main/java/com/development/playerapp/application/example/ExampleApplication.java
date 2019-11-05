@@ -1,6 +1,8 @@
 package com.development.playerapp.application.example;
 
 
+import com.development.playerapp.application.Logger;
+import com.development.playerapp.application.impl.ConsoleLoggerImpl;
 import com.development.playerapp.domain.factory.PlayerSetFactory;
 import com.development.playerapp.domain.model.PlayerPair;
 import com.development.playerapp.domain.model.PlayerSet;
@@ -16,6 +18,7 @@ Class responsible for coordinating domain objects and starting application
  */
 public class ExampleApplication {
 
+    private final Logger logger = new ConsoleLoggerImpl();
 
     public synchronized void run() {
         PlayerSet playerSet = new PlayerSetFactory(this).createSet(
@@ -25,9 +28,12 @@ public class ExampleApplication {
         );
 
         playerSet.getPlayers().forEach(Player::init);
-
-        playerSet.getCommunicationOrchestrator().startConversation();
-
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+        logger.debug("initialized players");
     }
 
 

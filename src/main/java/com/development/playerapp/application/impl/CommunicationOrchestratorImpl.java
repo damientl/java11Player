@@ -16,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Communication Orchestrator following @see CommunicationRulesService rules
  */
 public class CommunicationOrchestratorImpl implements CommunicationOrchestrator {
-    private Boolean conversationStared = false;
     private final CommunicationRulesService communicationRulesService = new CommunicationRulesService();
     private final MessageBroker messageBroker;
 
@@ -32,24 +31,9 @@ public class CommunicationOrchestratorImpl implements CommunicationOrchestrator 
         this.communicationChannel = communicationChannel;
     }
 
-  @Override
-    public void startConversation() {
-      conversationStared = true;
-      communicationChannel.notifyAll();
-    }
 
     public void waitConversationStarted() {
-
-      synchronized (communicationChannel)
-      {
-        try {
-          while (!conversationStared) {
-            communicationChannel.wait();
-          }
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
+      synchronized (communicationChannel) {}
     }
 
     @Override
