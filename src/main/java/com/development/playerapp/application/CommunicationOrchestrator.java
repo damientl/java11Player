@@ -6,7 +6,7 @@ package com.development.playerapp.application;
  */
 public interface CommunicationOrchestrator {
     void waitConversationStarted();
-
+    void startConversation();
     Boolean canCommunicationContinue(Integer receivedMessages, Integer sentMessages, String targetPlayer);
 
 }

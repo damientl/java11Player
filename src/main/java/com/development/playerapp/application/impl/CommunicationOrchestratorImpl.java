@@ -6,12 +6,6 @@ import com.development.playerapp.domain.model.MessageType;
 import com.development.playerapp.domain.service.CommunicationRulesService;
 import com.development.playerapp.infrastructure.MessageBroker;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
  * Communication Orchestrator following @see CommunicationRulesService rules
  */
@@ -19,22 +13,36 @@ public class CommunicationOrchestratorImpl implements CommunicationOrchestrator 
     private final CommunicationRulesService communicationRulesService = new CommunicationRulesService();
     private final MessageBroker messageBroker;
 
-    private Object communicationChannel;
+    private Object communicationMonitor = new Object();
+    boolean conversationStarted = false;
 
     private void killPlayers() {
         messageBroker.broadcast(new Message("", MessageType.POISON_PILL));
     }
 
-    public CommunicationOrchestratorImpl(MessageBroker messageBroker,
-        Object communicationChannel) {
+    public CommunicationOrchestratorImpl(MessageBroker messageBroker) {
         this.messageBroker = messageBroker;
-        this.communicationChannel = communicationChannel;
     }
 
 
     public void waitConversationStarted() {
-      synchronized (communicationChannel) {}
+      synchronized(communicationMonitor){
+          while(!conversationStarted){
+              try{
+                  communicationMonitor.wait();
+              } catch(InterruptedException e){
+                  Thread.interrupted();
+              }
+          }
+      }
     }
+    public void startConversation() {
+        synchronized(communicationMonitor){
+            conversationStarted = true;
+            communicationMonitor.notifyAll();
+        }
+    }
+
 
     @Override
     public Boolean canCommunicationContinue(Integer receivedMessages, Integer sentMessages, String targetPlayer) {

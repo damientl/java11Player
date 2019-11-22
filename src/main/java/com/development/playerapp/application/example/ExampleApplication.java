@@ -21,7 +21,7 @@ public class ExampleApplication {
     private final Logger logger = new ConsoleLoggerImpl();
 
     public synchronized void run() {
-        PlayerSet playerSet = new PlayerSetFactory(this).createSet(
+        PlayerSet playerSet = new PlayerSetFactory().createSet(
             Arrays.asList(
                 new PlayerPair(INITIATOR, PLAYER_2),
                 new PlayerPair(PLAYER_2, INITIATOR))
@@ -29,10 +29,13 @@ public class ExampleApplication {
 
         playerSet.getPlayers().forEach(Player::init);
         try {
+            logger.debug("Sleeping");
             Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
+        logger.debug("start conversation");
+        playerSet.getCommunicationOrchestrator().startConversation();
         logger.debug("initialized players");
     }
 

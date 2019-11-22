@@ -31,10 +31,10 @@ public class PlayerSetFactory {
     private final CommunicationOrchestrator communicationOrchestrator;
     private final Logger logger = new ConsoleLoggerImpl();
 
-    public PlayerSetFactory(Object communicationChannel) {
+    public PlayerSetFactory() {
         messageBroker = new MessageBroker();
         mediator = new MessagesMediatorImpl(messageBroker, logger);
-        communicationOrchestrator = new CommunicationOrchestratorImpl(messageBroker, communicationChannel);
+        communicationOrchestrator = new CommunicationOrchestratorImpl(messageBroker);
     }
 
     public PlayerSet createSet(List<PlayerPair> playerPairs) {
